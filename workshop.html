@@ -1175,6 +1175,8 @@ $('#fsBtn').onclick=function(){var fe=document.fullscreenElement||document.webki
 
 /* ========== ٣ التصويت بالباركود ========== */
 var FN='https://xlgttngreiuihutjrlev.supabase.co/functions/v1/workshop-vote';
+/* نسخة المدرب فقط تتصل بالخادم: الملف المحلي، أو الرابط المنشور مع #host */
+var HOSTMODE=location.protocol!=='https:'||/host/.test(location.hash);
 var DEF_URL='https://roshdy1221985.github.io/online-education/';
 var pollOpts=['ضعف الإنترنت وانقطاعه','الكاميرات المغلقة والصمت','تشتت الطلاب وقلة التركيز','صعوبة التقويم والغش','ضعف متابعة الأسرة'];
 var manual=store('votes')||[0,0,0,0,0],remote=[0,0,0,0,0],hidden=store('pollHidden');hidden=hidden===null?true:!!hidden;
@@ -1198,7 +1200,7 @@ function drawPoll(changed){var v=manual.map(function(m,i){return m+remote[i]}),t
   $('#revealBtn span').textContent=hidden?'اكشف النتيجة':'أخفِ النتيجة'}
 function setLive(st){var e=$('#liveState');e.className='livest '+(st===true?'ok':st===false?'bad':'');e.querySelector('span').textContent=st===true?'متصل · النتائج تتحدث مباشرة':st===false?'لا يوجد اتصال · التصويت اليدوي يعمل':'جارٍ الاتصال…'}
 var busy=false;
-function fetchVotes(){if(busy||!$('#pollSlide').classList.contains('on'))return;busy=true;
+function fetchVotes(){if(!HOSTMODE||busy||!$('#pollSlide').classList.contains('on'))return;busy=true;
   var ctl=window.AbortController?new AbortController():null;var to=setTimeout(function(){if(ctl)ctl.abort()},6000);
   fetch(FN+'?s='+sess+'&q=opening&t='+Date.now(),{cache:'no-store',signal:ctl?ctl.signal:undefined})
    .then(function(r){return r.json()}).then(function(d){if(!d||!d.counts)throw 0;var nw=d.counts.slice(0,5),ch=[];nw.forEach(function(x,i){if(x!==remote[i])ch.push(i)});remote=nw;setLive(true);drawPoll(ch)})
@@ -1212,7 +1214,7 @@ $('#qrBigClose').onclick=function(){$('#qrBig').classList.remove('on')};
 $('#qrBig').onclick=function(e){if(e.target.id==='qrBig')this.classList.remove('on')};
 drawQR();drawPoll();
 hooks['نشاط افتتاحي: تصويت']=function(){drawQR();fetchVotes()};
-window.WS={store:store,ar:ar,FN:FN,sess:function(){return sess},voteURL:function(){return voteURL()},svgFor:function(u){try{var q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag({cellSize:4,margin:2,scalable:true})}catch(e){return ''}},pollOpts:pollOpts,
+window.WS={host:HOSTMODE,store:store,ar:ar,FN:FN,sess:function(){return sess},voteURL:function(){return voteURL()},svgFor:function(u){try{var q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag({cellSize:4,margin:2,scalable:true})}catch(e){return ''}},pollOpts:pollOpts,
   bigQR:function(u,txt){$('#qrBigBox').innerHTML=WS.svgFor(u);$('#qrBigTxt').textContent=txt;$('#qrBig').classList.add('on')}};
 /* تحميل العرض بالباركود */
 function dlURL(){return store('dlurl')||(DEF_URL+'download.html')}
@@ -1775,6 +1777,9 @@ $('#vpMusic').onclick=function(){music.toggle()};
 (function(){
 'use strict';
 if(!window.WS)return;
+if(!WS.host){['joinBtn','qaBtn'].forEach(function(id){var b=document.getElementById(id);if(b)b.style.display='none'});
+  var c=document.querySelector('.qrcard');if(c){c.innerHTML='<p class="lead" style="font-size:16px">هذه نسخة المشارك. التصويت والأنشطة المباشرة تتم من صفحة الانضمام أثناء الورشة.</p>'}
+  return}
 var $=function(s,r){return (r||document).querySelector(s)};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 var ar=WS.ar,store=WS.store,FN=WS.FN;
@@ -1788,7 +1793,7 @@ function hide(id){hidden.push(id);store('hidden',hidden)}
 
 /* ---------- الاتصال بالخادم ---------- */
 function get(params){return fetch(FN+'?s='+WS.sess()+'&'+params+'&t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})}
-function setState(st){return fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'state',s:WS.sess(),key:HOST,state:st})}).then(function(r){return r.json()}).catch(function(){return {}})}
+function setState(st){return fetch(FN,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({mode:'state',s:WS.sess(),key:HOST,state:st})}).then(function(r){return r.json()}).catch(function(){return {}})}
 
 /* ---------- تعريف الأنشطة ---------- */
 var PRED=['٣ دقائق','١٠ دقائق','٢٠ دقيقة','٣٠ دقيقة'];

@@ -84,7 +84,7 @@ if(!/^[A-Za-z0-9]{3,16}$/.test(s)){app.innerHTML='';var b=el('div','big');b.appe
 var vid=store('ws_voter');if(!vid){vid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('v'+Date.now().toString(36)+Math.random().toString(36).slice(2,12));store('ws_voter',vid)}
 var name=store('ws_name')||'';
 function k(q){return 'ws_'+s+'_'+q}
-function send(q,o,t){return fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({s:s,q:q,o:o,t:t,n:name,v:vid})}).then(function(r){return r.json().then(function(d){if(!r.ok||!d.ok)throw 0;return d})})}
+function send(q,o,t){return fetch(FN,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({s:s,q:q,o:o,t:t,n:name,v:vid})}).then(function(r){return r.json().then(function(d){if(!r.ok||!d.ok)throw 0;return d})})}
 function vib(){try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
 /* الدخول بالاسم */
 function join(){app.innerHTML='';var w=el('div','big');w.appendChild(el('h1','','أهلًا بك في الورشة'));w.appendChild(el('p','sub','اكتب اسمك ليظهر مع أفكارك وفي لوحة صدارة المسابقة.'));app.appendChild(w);

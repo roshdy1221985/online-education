@@ -1817,8 +1817,12 @@ function setState(st){lastSt=st;
    .then(function(r){return r.json().then(function(d){if(!r.ok||!d.ok)throw d;return d})})
    .then(function(d){chip('ok','الجلسة '+WS.sess()+' · '+(ACTN[st.act]||st.act));return d})
    .catch(function(e){chip('bad',e&&e.error==='forbidden'?'الجلسة مستخدمة من جهاز آخر: اضغط «جلسة جديدة»':'تعذر الإرسال، تحقق من الإنترنت');return {}})}
-setInterval(function(){if(activeTab())setState(lastSt)},8000);
-$('#lchip').onclick=function(){setState(lastSt);alert('رمز الجلسة: '+WS.sess()+'\nالنشاط الحالي على الهواتف: '+(ACTN[lastSt.act]||lastSt.act)+'\nتأكد أن الرمز نفسه مكتوب أعلى صفحة الهاتف.')};
+setInterval(function(){if(document.hidden)return;
+  var sl=document.querySelector('.slide.on'),k=sl&&sl.dataset.live;
+  if(k&&LIVE[k]&&lastSt.act==='idle')lastSt=LIVE[k].state();
+  if(activeTab())setState(lastSt);else chip('warn','العرض مفتوح في نافذة أخرى، اضغط هنا للتحكم من هذه النافذة')},8000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden){claim();setState(lastSt)}});
+$('#lchip').onclick=function(){claim();onSlide(document.querySelector('.slide.on'));alert('رمز الجلسة: '+WS.sess()+'\nالنشاط الحالي على الهواتف: '+(ACTN[lastSt.act]||lastSt.act)+'\nتأكد أن الرمز نفسه مكتوب أعلى صفحة الهاتف.')};
 
 /* ---------- تعريف الأنشطة ---------- */
 var PRED=['٣ دقائق','١٠ دقائق','٢٠ دقيقة','٣٠ دقيقة'];
@@ -1841,9 +1845,9 @@ var LIVE={
 
 /* ---------- التنقل بين الشرائح ---------- */
 var curKey=null,idleT=null;
-function onSlide(sl){if(!sl)return;var k=sl.dataset.live||null;clearTimeout(idleT);
+function onSlide(sl){if(!sl)return;claim();var k=sl.dataset.live||null;clearTimeout(idleT);
   if(k&&LIVE[k]){curKey=k;if(LIVE[k].enter)LIVE[k].enter();setState(LIVE[k].state());if(LIVE[k].tick)LIVE[k].tick()}
-  else{curKey=null;var tt=sl.dataset.title||'';idleT=setTimeout(function(){setState({act:'idle',slide:tt})},900)}}
+  else{curKey=null;var tt=sl.dataset.title||'';idleT=setTimeout(function(){if(document.querySelector('.slide.on')===sl)setState({act:'idle',slide:tt})},900)}}
 document.addEventListener('ws-slide',function(e){onSlide(e.detail.el)});
 setInterval(function(){if(curKey&&LIVE[curKey].tick)LIVE[curKey].tick()},2500);
 

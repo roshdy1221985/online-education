@@ -151,6 +151,14 @@ h3{font-size:clamp(19px,2.6vw,24px)}
 .livepill{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--teal);font-weight:700}
 .livepill::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--teal);animation:ping 1.6s infinite}
 
+/* شارة الاتصال المباشر */
+.lchip{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.lchip i{width:10px;height:10px;border-radius:50%;background:var(--line);flex:none}
+.lchip.ok{color:var(--teal);border-color:rgba(46,196,182,.5)}.lchip.ok i{background:var(--teal)}
+.lchip.bad{color:var(--coral);border-color:var(--coral)}.lchip.bad i{background:var(--coral)}
+.lchip.warn{color:var(--gold);border-color:var(--gold)}.lchip.warn i{background:var(--gold)}
+@media (max-width:700px){.lchip span{display:none}}
+
 /* ===== التصويت بالباركود ===== */
 .pollgrid{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
 @media (max-width:760px){.pollgrid{grid-template-columns:1fr}}
@@ -696,6 +704,7 @@ label{font-size:14px;color:var(--muted)}
   <div class="sp"></div>
   <div class="count" id="count">١ / ١٨</div>
   <button class="ib" id="fsBtn" aria-label="ملء الشاشة"><svg class="i"><use href="#i-full"/></svg></button>
+  <button class="lchip" id="lchip" aria-label="حالة الاتصال المباشر"><i></i><span>غير متصل</span></button>
   <button class="ib" id="joinBtn" aria-label="باركود الانضمام"><svg class="i"><use href="#i-qr"/></svg></button>
   <button class="ib qab" id="qaBtn" aria-label="أسئلة المشاركين"><svg class="i"><use href="#i-chat"/></svg><em id="qaBadge"></em></button>
   <button class="ib" id="dlBtn" aria-label="باركود تحميل العرض"><svg class="i"><use href="#i-download"/></svg></button>
@@ -773,8 +782,9 @@ label{font-size:14px;color:var(--muted)}
     <div class="row">
      <button class="btn" id="newSess"><svg class="i"><use href="#i-reset"/></svg>جلسة جديدة</button>
      <button class="btn" id="qrSet"><svg class="i"><use href="#i-tool"/></svg>رابط صفحة التصويت</button>
+     <button class="btn" id="manBtn"><svg class="i"><use href="#i-hand"/></svg><span>تصويت يدوي: مغلق</span></button>
     </div>
-    <p class="hint">من ينضم الآن يبقى متصلًا طوال الورشة: كل نشاط قادم سيظهر على هاتفه تلقائيًا. بلا إنترنت؟ اضغط على الخيار لإضافة صوت يدوي.</p>
+    <p class="hint">من ينضم الآن يبقى متصلًا طوال الورشة: كل نشاط قادم سيظهر على هاتفه تلقائيًا. بلا إنترنت؟ افتح «تصويت يدوي» واضغط على الخيار مع كل يد مرفوعة.</p>
    </div>
   </div>
  </div>
@@ -1179,7 +1189,7 @@ var FN='https://xlgttngreiuihutjrlev.supabase.co/functions/v1/workshop-vote';
 var HOSTMODE=location.protocol!=='https:'||/host/.test(location.hash);
 var DEF_URL='https://roshdy1221985.github.io/online-education/';
 var pollOpts=['ضعف الإنترنت وانقطاعه','الكاميرات المغلقة والصمت','تشتت الطلاب وقلة التركيز','صعوبة التقويم والغش','ضعف متابعة الأسرة'];
-var manual=store('votes')||[0,0,0,0,0],remote=[0,0,0,0,0],hidden=store('pollHidden');hidden=hidden===null?true:!!hidden;
+var manualOn=false,manual=[0,0,0,0,0],remote=[0,0,0,0,0],hidden=store('pollHidden');hidden=hidden===null?true:!!hidden;
 var sess=store('session');
 function newCode(){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',c='';for(var i=0;i<5;i++)c+=a[Math.floor(Math.random()*a.length)];return c}
 if(!sess||!/^[A-Z0-9]{3,16}$/.test(sess)){sess=newCode();store('session',sess)}
@@ -1187,7 +1197,8 @@ function voteURL(){return (store('voteurl')||DEF_URL)+'#s='+sess+'&q=opening'}
 function qrSvg(){try{var q=qrcode(0,'M');q.addData(voteURL());q.make();return q.createSvgTag({cellSize:4,margin:2,scalable:true})}catch(e){return '<p style="color:#071222">تعذر إنشاء الباركود</p>'}}
 function drawQR(){var sv=qrSvg();$('#qrBox').innerHTML=sv;$('#qrBigBox').innerHTML=sv;$('#sessCode').textContent=sess;$('#qrBigCode').textContent=sess}
 var poll=$('#poll');
-pollOpts.forEach(function(t,i){var b=document.createElement('button');b.className='opt';b.innerHTML='<span class="bar"></span><span class="t">'+t+'</span><span class="n">٠</span>';b.onclick=function(){manual[i]++;store('votes',manual);drawPoll([i])};poll.appendChild(b)});
+pollOpts.forEach(function(t,i){var b=document.createElement('button');b.className='opt';b.innerHTML='<span class="bar"></span><span class="t">'+t+'</span><span class="n">٠</span>';b.onclick=function(){if(!manualOn)return;manual[i]++;drawPoll([i])};poll.appendChild(b)});
+store('votes',null);
 var lastTot=0;
 function drawPoll(changed){var v=manual.map(function(m,i){return m+remote[i]}),tot=v.reduce(function(a,b){return a+b},0),mx=Math.max.apply(null,v);
   $$('.opt',poll).forEach(function(b,i){var p=tot?v[i]/tot*100:0;
@@ -1206,8 +1217,9 @@ function fetchVotes(){if(!HOSTMODE||busy||!$('#pollSlide').classList.contains('o
    .then(function(r){return r.json()}).then(function(d){if(!d||!d.counts)throw 0;var nw=d.counts.slice(0,5),ch=[];nw.forEach(function(x,i){if(x!==remote[i])ch.push(i)});remote=nw;setLive(true);drawPoll(ch)})
    .catch(function(){setLive(false)}).then(function(){clearTimeout(to);busy=false})}
 setInterval(fetchVotes,2000);
+$('#manBtn').onclick=function(){manualOn=!manualOn;this.classList.toggle('sel',manualOn);this.querySelector('span').textContent='تصويت يدوي: '+(manualOn?'مفتوح':'مغلق')};
 $('#revealBtn').onclick=function(){hidden=!hidden;store('pollHidden',hidden);drawPoll()};
-$('#newSess').onclick=function(){if(!confirm('بدء جلسة جديدة؟ ستُصفَّر النتائج ويتغير الباركود.'))return;sess=newCode();store('session',sess);manual=[0,0,0,0,0];remote=[0,0,0,0,0];store('votes',manual);hidden=true;store('pollHidden',true);lastTot=0;drawQR();drawPoll();setLive(null);fetchVotes();try{document.dispatchEvent(new CustomEvent('ws-newsession'))}catch(e){}};
+$('#newSess').onclick=function(){if(!confirm('بدء جلسة جديدة؟ ستُصفَّر النتائج ويتغير الباركود.'))return;sess=newCode();store('session',sess);manual=[0,0,0,0,0];remote=[0,0,0,0,0];hidden=true;store('pollHidden',true);lastTot=0;drawQR();drawPoll();setLive(null);fetchVotes();try{document.dispatchEvent(new CustomEvent('ws-newsession'))}catch(e){}};
 $('#qrSet').onclick=function(){var u=prompt('رابط صفحة التصويت (صفحة GitHub Pages):',store('voteurl')||DEF_URL);if(u===null)return;u=u.trim();if(!/^https:\/\/\S+$/.test(u)){alert('الرابط لازم يبدأ بـ https://');return}if(!/\/$/.test(u)&&!/\.html$/.test(u))u+='/';store('voteurl',u);drawQR()};
 $('#qrBox').onclick=function(){drawQR();$('#qrBigTxt').innerHTML='امسح للتصويت · رمز الجلسة <b id="qrBigCode"></b>';$('#qrBigCode').textContent=sess;$('#qrBig').classList.add('on')};
 $('#qrBigClose').onclick=function(){$('#qrBig').classList.remove('on')};
@@ -1793,7 +1805,20 @@ function hide(id){hidden.push(id);store('hidden',hidden)}
 
 /* ---------- الاتصال بالخادم ---------- */
 function get(params){return fetch(FN+'?s='+WS.sess()+'&'+params+'&t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()})}
-function setState(st){return fetch(FN,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({mode:'state',s:WS.sess(),key:HOST,state:st})}).then(function(r){return r.json()}).catch(function(){return {}})}
+var ACTN={idle:'انتظار',poll:'تصويت',cloud:'سحابة كلمات',wall:'جدار',quiz:'مسابقة',board:'لوحة الصدارة',rate:'تقييم'};
+var lastSt={act:'idle'},TAB=gen(8);
+function chip(cls,txt){var c=$('#lchip');c.className='lchip '+cls;c.querySelector('span').textContent=txt;c.title=txt}
+function activeTab(){return store('tab')===TAB}
+function claim(){store('tab',TAB)}
+claim();window.addEventListener('focus',function(){if(!activeTab()){claim();setState(lastSt)}});
+function setState(st){lastSt=st;
+  if(!activeTab()){chip('warn','العرض مفتوح في نافذة أخرى');return Promise.resolve({})}
+  return fetch(FN,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({mode:'state',s:WS.sess(),key:HOST,state:st})})
+   .then(function(r){return r.json().then(function(d){if(!r.ok||!d.ok)throw d;return d})})
+   .then(function(d){chip('ok','الجلسة '+WS.sess()+' · '+(ACTN[st.act]||st.act));return d})
+   .catch(function(e){chip('bad',e&&e.error==='forbidden'?'الجلسة مستخدمة من جهاز آخر: اضغط «جلسة جديدة»':'تعذر الإرسال، تحقق من الإنترنت');return {}})}
+setInterval(function(){if(activeTab())setState(lastSt)},8000);
+$('#lchip').onclick=function(){setState(lastSt);alert('رمز الجلسة: '+WS.sess()+'\nالنشاط الحالي على الهواتف: '+(ACTN[lastSt.act]||lastSt.act)+'\nتأكد أن الرمز نفسه مكتوب أعلى صفحة الهاتف.')};
 
 /* ---------- تعريف الأنشطة ---------- */
 var PRED=['٣ دقائق','١٠ دقائق','٢٠ دقيقة','٣٠ دقيقة'];
@@ -1818,7 +1843,7 @@ var LIVE={
 var curKey=null,idleT=null;
 function onSlide(sl){if(!sl)return;var k=sl.dataset.live||null;clearTimeout(idleT);
   if(k&&LIVE[k]){curKey=k;if(LIVE[k].enter)LIVE[k].enter();setState(LIVE[k].state());if(LIVE[k].tick)LIVE[k].tick()}
-  else{curKey=null;idleT=setTimeout(function(){setState({act:'idle'})},900)}}
+  else{curKey=null;var tt=sl.dataset.title||'';idleT=setTimeout(function(){setState({act:'idle',slide:tt})},900)}}
 document.addEventListener('ws-slide',function(e){onSlide(e.detail.el)});
 setInterval(function(){if(curKey&&LIVE[curKey].tick)LIVE[curKey].tick()},2500);
 

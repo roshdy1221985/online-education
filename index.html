@@ -63,7 +63,7 @@ footer{padding:10px 16px calc(12px + env(safe-area-inset-bottom));display:flex;j
 </style>
 </head>
 <body>
-<header><span class="conn" id="conn"></span><b>ورشة التعلم عن بعد</b><button class="who" id="who" style="display:none"></button></header>
+<header><span class="conn" id="conn"></span><b>ورشة التعلم عن بعد</b><span class="who" id="sid" style="direction:ltr"></span><button class="who" id="who" style="display:none"></button></header>
 <main id="app"><div class="big"><div class="pulse"></div><p class="sub">جارٍ الاتصال…</p></div></main>
 <footer id="foot" style="display:none"><button class="ask" id="askBtn"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>اسأل المدرب</button></footer>
 <div class="brandf">أ. رشدي سيد · ٩٦٦٩٠١٢٣</div>
@@ -79,7 +79,7 @@ var STAR='<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
 var h={};location.hash.replace(/^#/,'').split('&').forEach(function(p){var kv=p.split('=');if(kv[0])h[kv[0]]=decodeURIComponent(kv[1]||'')});
-var s=h.s||'',app=document.getElementById('app');
+var s=h.s||'',app=document.getElementById('app');document.getElementById('sid').textContent=s;
 if(!/^[A-Za-z0-9]{3,16}$/.test(s)){app.innerHTML='';var b=el('div','big');b.appendChild(el('h1','','امسح الباركود الظاهر على شاشة الورشة'));app.appendChild(b);return}
 var vid=store('ws_voter');if(!vid){vid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('v'+Date.now().toString(36)+Math.random().toString(36).slice(2,12));store('ws_voter',vid)}
 var name=store('ws_name')||'';
@@ -102,7 +102,7 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)poll
 function title(t){app.appendChild(el('h1','',t))}
 function big(cls,svg,t1,t2){var b=el('div','big');var c=el('div','ck '+cls);c.innerHTML=svg;b.appendChild(c);if(t1)b.appendChild(el('h1','',t1));if(t2)b.appendChild(el('p','sub',t2));app.appendChild(b)}
 function render(){app.innerHTML='';if(!name){join();return}var a=st&&st.act||'idle';
-  if(a==='idle'){var b=el('div','big');b.appendChild(el('div','pulse'));b.appendChild(el('h1','',st&&st.msg||'تابع الشاشة'));b.appendChild(el('p','sub','النشاط القادم سيظهر هنا تلقائيًا، لا تغلق الصفحة.'));app.appendChild(b);return}
+  if(a==='idle'){var b=el('div','big');b.appendChild(el('div','pulse'));if(st&&st.slide)b.appendChild(el('p','sub','على الشاشة الآن: '+st.slide));b.appendChild(el('h1','',st&&st.msg||'تابع الشاشة'));b.appendChild(el('p','sub','هذه شريحة عرض. عند الوصول لنشاط تفاعلي سيظهر هنا تلقائيًا، فلا تغلق الصفحة.'));app.appendChild(b);return}
   if(a==='poll')return rPoll();if(a==='cloud')return rText(3,25,'كلمة واحدة أو كلمتان','أرسل الكلمة');if(a==='wall')return rText(3,160,st.hint||'اكتب فكرتك باختصار','أرسل');
   if(a==='quiz')return rQuiz();if(a==='board')return rBoard();if(a==='rate')return rRate();render.idle}
 function rPoll(){var q=st.q,done=store(k(q));title(st.title);

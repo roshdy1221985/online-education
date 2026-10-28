@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070f1f">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>تفاعل الورشة | أ. رشدي سيد</title>
+<style>
+:root{color-scheme:dark;--navy:#070f1f;--navy2:#0b1628;--panel:#12213b;--panel2:#18294a;--line:#25385c;--ink:#eef3fb;--muted:#9fb0c9;--gold:#e3c26b;--goldG:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c);--teal:#2ec4b6;--coral:#ff7a6b}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--navy);color:var(--ink);font-family:'Tajawal','Geeza Pro','Segoe UI',Arial,sans-serif}
+body{min-height:100dvh;display:flex;flex-direction:column}
+button,input,textarea{font-family:inherit;color:inherit}
+header{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--navy2);border-bottom:1px solid var(--line)}
+header b{font-family:'Amiri','Geeza Pro',serif;font-size:18px;background:var(--goldG);-webkit-background-clip:text;background-clip:text;color:transparent;flex:1}
+.who{font-size:13px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:20px;padding:4px 10px}
+.conn{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.conn.ok{background:var(--teal)}.conn.bad{background:var(--coral)}
+main{flex:1;width:100%;max-width:520px;margin:0 auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+h1{font-family:'Amiri','Geeza Pro',serif;font-size:24px;line-height:1.55;text-align:center}
+.sub{text-align:center;color:var(--muted);line-height:1.8}
+.opt{width:100%;min-height:60px;padding:12px 16px;border-radius:16px;background:var(--panel);border:1px solid var(--line);font-size:18px;font-weight:700;text-align:right;display:flex;align-items:center;gap:12px;cursor:pointer}
+.opt:active{transform:scale(.98)}
+.opt i{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;font-style:normal;color:#071222;font-weight:800}
+.opts{display:flex;flex-direction:column;gap:10px}
+.qz .opt{color:#071222;border:0;min-height:70px}
+.qz .opt i{background:rgba(255,255,255,.5)}
+input.f,textarea.f{width:100%;font-size:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;color:var(--ink)}
+textarea.f{min-height:120px;resize:vertical;line-height:1.7}
+.go{min-height:56px;border-radius:16px;border:0;background:var(--goldG);color:#2a1d02;font-size:18px;font-weight:800;cursor:pointer}
+.go:disabled{opacity:.5}
+.msg{text-align:center;color:var(--muted);min-height:24px;line-height:1.7}
+.msg.err{color:var(--coral)}.msg.ok{color:var(--teal)}
+.big{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.ck{width:100px;height:100px;border-radius:50%;display:grid;place-items:center;animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+.ck svg{width:56px;height:56px;stroke:#06231f;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ck.ok{background:var(--teal)}.ck.no{background:var(--coral)}.ck.wait{background:var(--panel);border:2px solid var(--gold)}
+.ck.wait svg{stroke:var(--gold)}
+@keyframes pop{from{transform:scale(.2);opacity:0}to{transform:none;opacity:1}}
+.pulse{width:16px;height:16px;border-radius:50%;background:var(--teal);animation:ping 1.6s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(46,196,182,.6)}70%{box-shadow:0 0 0 18px rgba(46,196,182,0)}100%{box-shadow:0 0 0 0 rgba(46,196,182,0)}}
+.mine{display:flex;flex-direction:column;gap:6px}
+.mine span{background:#fff7d6;color:#3b2f05;border-radius:10px;padding:8px 12px;line-height:1.6;font-size:15px}
+.stars{display:flex;gap:8px;justify-content:center;direction:ltr}
+.stars button{width:52px;height:52px;background:none;border:0;color:var(--line);cursor:pointer}
+.stars svg{width:46px;height:46px;fill:currentColor}
+.stars button.on{color:var(--gold)}
+.lb{display:flex;flex-direction:column;gap:8px}
+.lb div{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.lb div.me{border-color:var(--gold);background:var(--panel2)}
+.lb b{color:var(--gold);text-align:center;font-family:'Amiri',serif;font-size:20px}
+.lb em{font-style:normal;color:var(--teal);font-weight:800}
+footer{padding:10px 16px calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;border-top:1px solid var(--line);background:var(--navy2)}
+.ask{min-height:48px;padding:0 20px;border-radius:24px;border:1px solid var(--gold);background:none;color:var(--gold);font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer}
+.ask svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
+.sheet{position:fixed;inset:0;background:rgba(3,8,18,.8);display:none;align-items:flex-end;z-index:5}
+.sheet.on{display:flex}
+.sheet>div{width:100%;max-width:520px;margin:0 auto;background:var(--navy2);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;border-top:2px solid var(--gold)}
+.sheet h2{font-family:'Amiri',serif;color:var(--gold);font-size:22px}
+.x{align-self:flex-start;background:none;border:0;color:var(--muted);font-size:15px;cursor:pointer}
+.brandf{text-align:center;color:var(--muted);font-size:12px;padding:6px}
+</style>
+</head>
+<body>
+<header><span class="conn" id="conn"></span><b>ورشة التعلم عن بعد</b><button class="who" id="who" style="display:none"></button></header>
+<main id="app"><div class="big"><div class="pulse"></div><p class="sub">جارٍ الاتصال…</p></div></main>
+<footer id="foot" style="display:none"><button class="ask" id="askBtn"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>اسأل المدرب</button></footer>
+<div class="brandf">أ. رشدي سيد · ٩٦٦٩٠١٢٣</div>
+<div class="sheet" id="sheet"><div><h2>سؤالك للمدرب</h2><textarea class="f" id="askT" maxlength="160" placeholder="اكتب سؤالك هنا…"></textarea><button class="go" id="askGo">أرسل السؤال</button><p class="msg" id="askMsg"></p><button class="x" id="askX">إغلاق</button></div></div>
+<script>
+(function(){
+'use strict';
+var FN='https://xlgttngreiuihutjrlev.supabase.co/functions/v1/workshop-vote';
+var COL=['#2ec4b6','#e3c26b','#ff7a6b','#9b8cff','#5fb4ff'],L=['أ','ب','ج','د','هـ'],AR='٠١٢٣٤٥٦٧٨٩';
+var ar=function(n){return String(n).replace(/\d/g,function(d){return AR[d]})};
+var CK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',XX='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',HG='<svg viewBox="0 0 24 24"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/></svg>';
+var STAR='<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>';
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+var h={};location.hash.replace(/^#/,'').split('&').forEach(function(p){var kv=p.split('=');if(kv[0])h[kv[0]]=decodeURIComponent(kv[1]||'')});
+var s=h.s||'',app=document.getElementById('app');
+if(!/^[A-Za-z0-9]{3,16}$/.test(s)){app.innerHTML='';var b=el('div','big');b.appendChild(el('h1','','امسح الباركود الظاهر على شاشة الورشة'));app.appendChild(b);return}
+var vid=store('ws_voter');if(!vid){vid=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('v'+Date.now().toString(36)+Math.random().toString(36).slice(2,12));store('ws_voter',vid)}
+var name=store('ws_name')||'';
+function k(q){return 'ws_'+s+'_'+q}
+function send(q,o,t){return fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({s:s,q:q,o:o,t:t,n:name,v:vid})}).then(function(r){return r.json().then(function(d){if(!r.ok||!d.ok)throw 0;return d})})}
+function vib(){try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
+/* الدخول بالاسم */
+function join(){app.innerHTML='';var w=el('div','big');w.appendChild(el('h1','','أهلًا بك في الورشة'));w.appendChild(el('p','sub','اكتب اسمك ليظهر مع أفكارك وفي لوحة صدارة المسابقة.'));app.appendChild(w);
+  var i=el('input','f');i.maxLength=30;i.placeholder='اسمك';i.value=name;app.appendChild(i);var g=el('button','go','ادخل');app.appendChild(g);
+  g.onclick=function(){var v=i.value.trim();if(v.length<2){i.focus();return}name=v;store('ws_name',v);who();st=null;stStr='';render();poll()};
+  i.onkeydown=function(e){if(e.key==='Enter')g.click()}}
+function who(){var w=document.getElementById('who');w.textContent=name;w.style.display=name?'':'none';document.getElementById('foot').style.display=name?'':'none'}
+document.getElementById('who').onclick=join;
+/* المتابعة */
+var st=null,stStr='';
+function setConn(ok){document.getElementById('conn').className='conn '+(ok?'ok':'bad')}
+function poll(){fetch(FN+'?s='+s+'&mode=state&t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){setConn(true);var j=JSON.stringify(d.state||{});if(j!==stStr){stStr=j;st=d.state||{act:'idle'};if(name)render()}}).catch(function(){setConn(false)})}
+setInterval(function(){if(!document.hidden)poll()},3000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)poll()});
+function title(t){app.appendChild(el('h1','',t))}
+function big(cls,svg,t1,t2){var b=el('div','big');var c=el('div','ck '+cls);c.innerHTML=svg;b.appendChild(c);if(t1)b.appendChild(el('h1','',t1));if(t2)b.appendChild(el('p','sub',t2));app.appendChild(b)}
+function render(){app.innerHTML='';if(!name){join();return}var a=st&&st.act||'idle';
+  if(a==='idle'){var b=el('div','big');b.appendChild(el('div','pulse'));b.appendChild(el('h1','',st&&st.msg||'تابع الشاشة'));b.appendChild(el('p','sub','النشاط القادم سيظهر هنا تلقائيًا، لا تغلق الصفحة.'));app.appendChild(b);return}
+  if(a==='poll')return rPoll();if(a==='cloud')return rText(3,25,'كلمة واحدة أو كلمتان','أرسل الكلمة');if(a==='wall')return rText(3,160,st.hint||'اكتب فكرتك باختصار','أرسل');
+  if(a==='quiz')return rQuiz();if(a==='board')return rBoard();if(a==='rate')return rRate();render.idle}
+function rPoll(){var q=st.q,done=store(k(q));title(st.title);
+  if(done!==null){big('ok',CK,'تم تسجيل صوتك','انظر إلى الشاشة لترى النتيجة.');return}
+  var os=el('div','opts');(st.opts||[]).forEach(function(o,i){var b=el('button','opt');b.innerHTML='<i style="background:'+COL[i%5]+'">'+ar(i+1)+'</i>';b.appendChild(el('span','',o));
+    b.onclick=function(){all(os,true);vib();send(q,i).then(function(){store(k(q),i);render()}).catch(function(){all(os,false);msg('لم يصل صوتك، تأكد من الإنترنت.',1)})};os.appendChild(b)});app.appendChild(os);app.appendChild(el('p','msg'))}
+function all(c,d){Array.prototype.forEach.call(c.querySelectorAll('button'),function(b){b.disabled=d})}
+function msg(t,err){var m=app.querySelector('.msg');if(m){m.textContent=t;m.className='msg'+(err?' err':' ok')}}
+function rText(max,len,ph,btn){var q=st.q,n=+(store(k(q))||0),mine=JSON.parse(store(k(q)+'_m')||'[]');title(st.title);
+  if(n>=max){big('ok',CK,'شكرًا لمشاركتك','وصلت مشاركاتك، شاهدها على الشاشة.')}
+  else{var f=len>30?el('textarea','f'):el('input','f');f.maxLength=len;f.placeholder=ph;app.appendChild(f);var g=el('button','go',btn+(max>1?' ('+ar(n+1)+' من '+ar(max)+')':''));app.appendChild(g);app.appendChild(el('p','msg'));
+    g.onclick=function(){var v=f.value.trim();if(!v){f.focus();return}g.disabled=true;vib();send(q,0,v).then(function(){mine.push(v);store(k(q),n+1);store(k(q)+'_m',JSON.stringify(mine));render();msg('وصلت، انظر إلى الشاشة',0)}).catch(function(){g.disabled=false;msg('لم تصل، تأكد من الإنترنت.',1)})}}
+  if(mine.length){var m=el('div','mine');mine.forEach(function(x){m.appendChild(el('span','',x))});app.appendChild(m)}}
+function rQuiz(){var q=st.q,mine=store(k(q));app.appendChild(el('p','sub','السؤال '+ar(st.i+1)+' من '+ar(st.n)));title(st.title);
+  if(st.reveal){if(mine===null){big('wait',HG,'لم تُجب عن هذا السؤال','استعد للسؤال التالي.');return}
+    if(+mine===st.correct)big('ok',CK,'إجابة صحيحة','أحسنت! النقاط حسب سرعتك.');else big('no',XX,'إجابة غير صحيحة','الصحيحة: '+st.opts[st.correct]);return}
+  if(mine!==null){big('wait',HG,'تم إرسال إجابتك','انتظر كشف الإجابة على الشاشة.');return}
+  var os=el('div','opts qz');st.opts.forEach(function(o,i){var b=el('button','opt');b.style.background=COL[i%5];b.innerHTML='<i>'+L[i]+'</i>';b.appendChild(el('span','',o));
+    b.onclick=function(){all(os,true);vib();send(q,i).then(function(){store(k(q),i);render()}).catch(function(){all(os,false);msg('لم تصل إجابتك، حاول مرة أخرى.',1)})};os.appendChild(b)});app.appendChild(os);app.appendChild(el('p','msg'))}
+function rBoard(){title('لوحة الصدارة');var lb=el('div','lb'),top=st.top||[];if(!top.length)app.appendChild(el('p','sub','لا توجد نتائج بعد.'));
+  top.forEach(function(r,i){var d=el('div',r[0]===name?'me':'');d.appendChild(el('b','',ar(i+1)));d.appendChild(el('span','',r[0]));d.appendChild(el('em','',ar(r[1])));lb.appendChild(d)});app.appendChild(lb);
+  if(top.length&&!top.some(function(r){return r[0]===name}))app.appendChild(el('p','sub','لم تدخل العشرة الأوائل هذه المرة، شكرًا لمشاركتك!'))}
+function rRate(){var q='rate',done=store(k(q));title(st.title||'قيّم الورشة');
+  if(done!==null){big('ok',CK,'شكرًا لتقييمك','سعدنا بمشاركتك في الورشة.');return}
+  var w=el('div','stars');for(var i=1;i<=5;i++){(function(v){var b=el('button');b.innerHTML=STAR;b.setAttribute('aria-label',ar(v)+' نجوم');
+    b.onclick=function(){Array.prototype.forEach.call(w.children,function(x,j){x.classList.toggle('on',j<v)});vib();send(q,v-1).then(function(){store(k(q),v);setTimeout(render,600)}).catch(function(){msg('لم يصل تقييمك، حاول مرة أخرى.',1)})};w.appendChild(b)})(i)}
+  app.appendChild(w);app.appendChild(el('p','msg'))}
+/* اسأل المدرب */
+var sh=document.getElementById('sheet');
+document.getElementById('askBtn').onclick=function(){document.getElementById('askMsg').textContent='';sh.classList.add('on');document.getElementById('askT').focus()};
+document.getElementById('askX').onclick=function(){sh.classList.remove('on')};
+document.getElementById('askGo').onclick=function(){var t=document.getElementById('askT'),v=t.value.trim(),m=document.getElementById('askMsg'),g=this;if(!v){t.focus();return}g.disabled=true;
+  send('qa',0,v).then(function(){t.value='';m.className='msg ok';m.textContent='وصل سؤالك للمدرب';setTimeout(function(){sh.classList.remove('on')},1200)}).catch(function(){m.className='msg err';m.textContent='لم يصل، تأكد من الإنترنت.'}).then(function(){g.disabled=false})};
+who();if(!name)join();poll();
+})();
+</script>
+</body>
+</html>

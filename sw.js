@@ -1,5 +1,5 @@
 // غيّر الرقم مع كل تحديث للملفات حتى يأخذ المشاركون النسخة الجديدة
-const CACHE_VERSION = 'workshop-v3';
+const CACHE_VERSION = 'workshop-v4';
 const FILES = ['./index.html', './workshop.html', './download.html', './manifest.json', './icon-180.png', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
